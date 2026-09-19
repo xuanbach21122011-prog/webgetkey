@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Nhận Chặng 1 - Hệ Thống Lấy Key</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.12) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #f8fafc;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-wrapper {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(56, 189, 248, 0.2));
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+            color: #4ade80;
+        }
+
+        .icon-wrapper svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .loader-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(56, 189, 248, 0.2);
+            border-radius: 50%;
+            border-top-color: #38bdf8;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: #38bdf8;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="icon-wrapper">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+
+        <h2>Đã Xong Chặng 1!</h2>
+        <p>Hệ thống đang kiểm tra và tạo link cho Chặng 2. Vui lòng chờ trong giây lát...</p>
+
+        <div class="loader-box">
+            <div class="spinner"></div>
+            <div id="statusText" class="status-text">Đang tạo link Chặng 2...</div>
+        </div>
+    </div>
+
+    <script>
+        // Gọi API tạo link Chặng 2 khi trang được tải
+        fetch('/api/step2')
+            .then(res => res.json())
+            .then(data => {
+                const statusText = document.getElementById('statusText');
+                if (data.success) {
+                    statusText.innerText = 'Tạo link thành công! Đang chuyển hướng...';
+                    setTimeout(() => {
+                        window.location.href = data.url;
+                    }, 1000);
+                } else {
+                    statusText.style.color = '#f87171';
+                    statusText.innerText = '⚠️ Lỗi: ' + data.message;
+                }
+            })
+            .catch(err => {
+                const statusText = document.getElementById('statusText');
+                statusText.style.color = '#f87171';
+                statusText.innerText = '⚠️ Không thể kết nối tới Server!';
+            });
+    </script>
+</body>
+</html>

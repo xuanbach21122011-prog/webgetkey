@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận Key Thành Công</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(74, 222, 128, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.12) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #f8fafc;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .icon-wrapper {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(56, 189, 248, 0.2));
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+            color: #4ade80;
+        }
+
+        .icon-wrapper svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #4ade80;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .key-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .key-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4ade80;
+            word-break: break-all;
+            letter-spacing: 0.5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #16a34a 0%, #0d9488 100%);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+            display: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.4);
+        }
+
+        .status-msg {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="icon-wrapper">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+
+        <h2>Xác Nhận Thành Công!</h2>
+        <p>Bạn đã vượt đủ 2 chặng link. Dưới đây là Key truy cập của bạn:</p>
+
+        <div class="key-container">
+            <div id="keyDisplay" class="key-text">Đang lấy Key từ kho...</div>
+        </div>
+
+        <button id="btnCopy" class="btn" onclick="copyKey()">Sao Chép Key</button>
+        <div id="statusMsg" class="status-msg"></div>
+    </div>
+
+    <script>
+        let currentKey = '';
+
+        fetch('/api/get-final-key')
+            .then(res => res.json())
+            .then(data => {
+                const keyDisplay = document.getElementById('keyDisplay');
+                const btnCopy = document.getElementById('btnCopy');
+                
+                if (data.success) {
+                    currentKey = data.key;
+                    keyDisplay.innerText = data.key;
+                    btnCopy.style.display = 'block';
+                } else {
+                    keyDisplay.style.color = '#f87171';
+                    keyDisplay.innerText = '⚠️ ' + data.message;
+                }
+            })
+            .catch(() => {
+                document.getElementById('keyDisplay').innerText = '⚠️ Lỗi kết nối Server!';
+            });
+
+        function copyKey() {
+            if (!currentKey) return;
+            navigator.clipboard.writeText(currentKey);
+            const statusMsg = document.getElementById('statusMsg');
+            statusMsg.style.color = '#4ade80';
+            statusMsg.innerText = '✓ Đã sao chép Key vào khay nhớ tạm!';
+        }
+    </script>
+</body>
+</html>
