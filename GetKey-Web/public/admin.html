@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Lý Kho Key</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.12) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #f8fafc;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 36px 28px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+
+        input[type="password"], textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input[type="password"]:focus, textarea:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+        }
+
+        #msg {
+            margin-top: 16px;
+            font-size: 13px;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>QUẢN LÝ KHO KEY</h2>
+        <p class="subtitle">Trang nhập danh sách Key dành cho Admin</p>
+
+        <div class="form-group">
+            <label>Mật Khẩu Quản Lý</label>
+            <input type="password" id="adminPass" placeholder="Nhập mật khẩu Admin...">
+        </div>
+
+        <div class="form-group">
+            <label>Danh Sách Key (Phân cách bằng dấu |)</label>
+            <textarea id="rawKeys" placeholder="KEY1 | KEY2 | KEY3 | KEY4"></textarea>
+        </div>
+
+        <button class="btn" onclick="addKeys()">LƯU VÀO KHO KEY</button>
+        <div id="msg"></div>
+    </div>
+
+    <script>
+        async function addKeys() {
+            const password = document.getElementById('adminPass').value;
+            const rawKeys = document.getElementById('rawKeys').value;
+            const msg = document.getElementById('msg');
+
+            if (!password || !rawKeys) {
+                msg.style.color = '#f87171';
+                msg.innerText = '⚠️ Vui lòng nhập đầy đủ mật khẩu và danh sách Key!';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/add-keys', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, rawKeys })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    msg.style.color = '#4ade80';
+                    msg.innerHTML = `✓ Đã thêm <strong>${data.added}</strong> Key! Tổng trong kho: <strong>${data.total}</strong>`;
+                    document.getElementById('rawKeys').value = '';
+                } else {
+                    msg.style.color = '#f87171';
+                    msg.innerText = '⚠️ ' + data.message;
+                }
+            } catch (e) {
+                msg.style.color = '#f87171';
+                msg.innerText = '⚠️ Không thể kết nối đến Server!';
+            }
+        }
+    </script>
+</body>
+</html>
