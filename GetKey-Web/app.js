@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 // ================= CẤU HÌNH CỦA BẠN =================
 const LINK4M_TOKEN = '6a9428f7cfdf872ac83cf502'; // Token Link4M của bạn
-const ADMIN_PASS = '21122011';                     // Mật khẩu Admin
+const ADMIN_PASS = '21122011';                    // Mật khẩu Admin
 // ====================================================
 
 let keyStorage = [];
@@ -35,9 +35,9 @@ app.get('/api/step1', async (req, res) => {
         const apiRes = await axios.get(`https://link4m.com/api?api=${LINK4M_TOKEN}&url=${targetUrl}`);
         const shortLink = apiRes.data?.shortenedUrl || apiRes.data?.url;
         if (shortLink) res.json({ success: true, url: shortLink });
-        else res.json({ success: false, message: 'Lỗi tạo link Chặng 1! Kiểm tra Token API.' });
+        else res.json({ success: false, message: 'Lỗi tạo link ChẶng 1! Kiểm tra Token API.' });
     } catch (e) {
-        res.json({ success: false, message: 'Lỗi kết nối Link4M Chặng 1!' });
+        res.json({ success: false, message: 'Lỗi kết nối Link4M ChẶng 1!' });
     }
 });
 
@@ -49,9 +49,9 @@ app.get('/api/step2', async (req, res) => {
         const apiRes = await axios.get(`https://link4m.com/api?api=${LINK4M_TOKEN}&url=${targetUrl}`);
         const shortLink = apiRes.data?.shortenedUrl || apiRes.data?.url;
         if (shortLink) res.json({ success: true, url: shortLink });
-        else res.json({ success: false, message: 'Lỗi tạo link Chặng 2!' });
+        else res.json({ success: false, message: 'Lỗi tạo link ChẶng 2!' });
     } catch (e) {
-        res.json({ success: false, message: 'Lỗi kết nối Link4M Chặng 2!' });
+        res.json({ success: false, message: 'Lỗi kết nối Link4M ChẶng 2!' });
     }
 });
 
